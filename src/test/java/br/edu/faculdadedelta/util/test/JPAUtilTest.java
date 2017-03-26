@@ -1,20 +1,31 @@
 package br.edu.faculdadedelta.util.test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
 
 import javax.persistence.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+
 
 import br.edu.faculdadedelta.util.JPAUtil;
 
 public class JPAUtilTest {
 
 	private EntityManager em;
+	
+	@Before
+	public void instanciarEntityManager(){
+		//em = Persistence.createEntityManagerFactory("DeltaPU").createEntityManager(); 
+		em = JPAUtil.INSTANCE.getEntityManager();
+	}
+	
+	@After
+	public void fecharEntityManager() {
+		if (em.isOpen()){
+			em.close();
+		}
+	}
 	
 	@Test
 	public void deveTerInstnciaDoEntityManagerDefinida(){
@@ -34,14 +45,6 @@ public class JPAUtilTest {
 		em.getTransaction().begin();
 		assertTrue("transação deve estar aberta", em.getTransaction().isActive());
 	}
-	@Before
-	public void instanciarEntityManager(){
-		em = JPAUtil.INSTANCE.getEntityManager();
-	}
-	@After
-	public void fecharEntityManager() {
-		if (em.isOpen()){
-			em.close();
-		}
-	}
+	
+
 }

@@ -15,25 +15,18 @@ public class Disciplina extends BaseEntity<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id_disciplina")
+	@Column(name = "id_disciplina", nullable = false, unique = true)
 	private Long id;
 
-	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "codigo_disciplina", nullable = false, unique = true, length = 20)
+	@Column(name = "codigo_disciplina", length = 20)
 	private String codigo;
 
-	@Column(name = "nome_disciplina", nullable = false, length = 50)
+	@Column(name = "nome_disciplina", length = 50)
 	private String nome;
 
 	public Disciplina() {
 	}
 
-	public Disciplina(Long id, String codigo, String nome) {
-		super();
-		this.id = id;
-		this.codigo = codigo;
-		this.nome = nome;
-	}
 
 	public Long getId() {
 		return id;

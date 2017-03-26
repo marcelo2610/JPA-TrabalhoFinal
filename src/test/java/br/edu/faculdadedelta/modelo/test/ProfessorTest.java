@@ -1,11 +1,6 @@
 package br.edu.faculdadedelta.modelo.test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -21,7 +16,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.edu.faculdadedelta.base.test.BaseTest;
 import br.edu.faculdadedelta.modelo.Professor;
 import br.edu.faculdadedelta.util.JPAUtil;
 
@@ -35,7 +29,6 @@ public class ProfessorTest {
 		Professor professor = em.find(Professor.class, 1L);
 
 		assertNotNull("verifica se encontrou um registro", professor);
-
 		// em.detach(professor);
 		em.clear();
 
@@ -79,47 +72,11 @@ public class ProfessorTest {
 		fail("deve ter dado NonUniqueResultException");
 	}
 
-	@Test
-	public void deveContarQuantidadeProfessor() {
-		deveSalvarProfessor();
-		Query query = em.createQuery("SELECT COUNT(p.id) FROM Professor p");
-		Long qtdeRegistros = (Long) query.getSingleResult();
-		assertTrue("deve ter pelo menos um registro", qtdeRegistros > 0);
-	}
 
 	@Test
-	public void deveConsultarApenasIdNome() {
+	public void deveConsultarProfessor() {
 		deveSalvarProfessor();
-
-		Query query = em.createQuery("SELECT p.id, p.nome FROM Professor p");
-
-		List<Object[]> professores = query.getResultList();
-		assertFalse("deve ter encontrado professores", professores.isEmpty());
-
-		professores.forEach(linha -> {
-			assertTrue("primeiro item é o ID", linha[0] instanceof Long);
-			assertTrue("segundo item é o nome", linha[1] instanceof String);
-		});
-	}
-
-	@Test
-	public void deveConsultarApenasIdNomeComConstrutor() {
-		deveSalvarProfessor();
-
-		Query query = em.createQuery("SELECT new Professor(p.id, p.nome) FROM Professor p");
-
-		List<Professor> professores = query.getResultList();
-		assertFalse("deve ter encontrado professores", professores.isEmpty());
-
-		professores.forEach(professor -> {
-			assertNull("não deve ter matricula", professor.getMatricula());
-		});
-	}
-
-	@Test
-	public void deveConsultarMatricula() {
-		deveSalvarProfessor();
-		String filtro = "Souza";
+		String filtro = "SOUZA";
 
 		Query query = em.createQuery("SELECT p.matricula FROM Professor p WHERE p.nome LIKE :nome");
 		query.setParameter("nome", "%" + filtro + "%");
@@ -134,7 +91,7 @@ public class ProfessorTest {
 
 		@SuppressWarnings("unchecked")
 		TypedQuery<Professor> query = (TypedQuery<Professor>) em
-				.createQuery("SELECT p.nome, p.matricula FROM Professor p").setMaxResults(1);
+				.createQuery("SELECT p FROM Professor p").setMaxResults(1);
 
 		Professor professor = query.getSingleResult();
 
@@ -154,18 +111,35 @@ public class ProfessorTest {
 	}
 
 	@Test
+	public void deveExcluirProfessor() {
+		deveSalvarProfessor();
+		TypedQuery<Long> query = em.createQuery("SELECT MAX(p.id) FROM Professor p", Long.class);
+		Long id = query.getSingleResult();
+		em.getTransaction().begin();
+		Professor professor = em.find(Professor.class, id);
+		em.remove(professor);
+		em.getTransaction().commit();
+		Professor professorExcluido = em.find(Professor.class, id);
+		assertNull("não deve ter encontrado o professor", professorExcluido);
+
+	}
+
+
 	public void deveSalvarProfessor() {
-		Professor professor = new Professor().setNome("MARCELO DE SOUZA").setMatricula("111.111.111-0")
-				.setTitulacao("MESTRE").setEmail("marcelo@email.com").setTelefone("91111-1111");
-		assertTrue("não deve ter ID definido", professor.isTransient());
+		Professor professor = new Professor();
+		professor.setNome("MARCELO DE SOUZA");
+		professor.setMatricula("111.111.111-0");
+
+		//assertTrue("não deve ter ID definido", professor.isTransient());
 
 		em.getTransaction().begin();
 		em.persist(professor);
 		em.getTransaction().commit();
 
-		assertFalse("deve ter ID definido", professor.isTransient());
+		//assertFalse("deve ter ID definido", professor.isTransient());
 
 	}
+
 	@Before
 	public void instanciarEntityManager() {
 		em = JPAUtil.INSTANCE.getEntityManager();

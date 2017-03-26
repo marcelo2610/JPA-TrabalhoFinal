@@ -24,10 +24,10 @@ public class Professor extends BaseEntity<Long> {
 	@Column(name = "id_professor", nullable = false, unique = true)
 	private Long id;
 
-	@Column(name = "mat_professor", nullable = false, unique = true)
+	@Column(name = "mat_professor")
 	private String matricula;
 	
-	@Column(name = "nome_professor", nullable = false, length = 80)
+	@Column(name = "nome_professor", length = 80)
 	private String nome;
 
 	@Column(name = "tit_professor", length = 20)	
@@ -48,6 +48,18 @@ public class Professor extends BaseEntity<Long> {
 
 	public Professor() {
 
+	}
+	public Professor(String nome, String matricula) {
+		super();
+		this.nome = nome;
+		this.matricula = matricula;
+
+	}
+	
+	public Professor(Long id, String nome) {
+		super();
+		this.id = id;
+		this.nome = nome;
 	}
 
 	public Professor(Long id, String matricula, String nome, String titulacao, String telefone, String email,

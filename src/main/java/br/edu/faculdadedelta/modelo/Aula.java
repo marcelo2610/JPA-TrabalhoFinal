@@ -1,5 +1,6 @@
 package br.edu.faculdadedelta.modelo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class Aula extends BaseEntity<Long> {
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
 	@JoinTable(name = "aula_disciplina",
-			joinColumns = @JoinColumn(name = "id_disciplina"),
+			joinColumns = @JoinColumn(name = "id_aula"),
 			inverseJoinColumns = @JoinColumn(name = "id_disciplina"))
 	private List<Disciplina> disciplina;
 
@@ -92,13 +93,12 @@ public class Aula extends BaseEntity<Long> {
 
 
 	public List<Disciplina> getDisciplina() {
+		if (disciplina == null){
+			disciplina = new ArrayList<>();
+		}
 		return disciplina;
 	}
 
-
-	public void setDisciplina(List<Disciplina> disciplina) {
-		this.disciplina = disciplina;
-	}
 
 
 }

@@ -55,13 +55,13 @@ public class DisciplinaTest {
 	@Test
 	public void deveAlterarDisciplina() {
 		deveSalvarDisciplina();
-		TypedQuery<Disciplina> query = em.createQuery("SELECT p FROM Disciplina d", Disciplina.class).setMaxResults(1);
+		TypedQuery<Disciplina> query = em.createQuery("SELECT d FROM Disciplina d", Disciplina.class).setMaxResults(1);
 
 		Disciplina disciplina = query.getSingleResult();
 		assertNotNull("deve ter encontrado um disciplina", disciplina);
 		Integer versao = disciplina.getVersion();
 		em.getTransaction().begin();
-		disciplina.setCodigo("CMP-1245");
+		disciplina.setCodigo("CMP-3333");
 		disciplina = em.merge(disciplina);
 		em.getTransaction().commit();
 		assertNotEquals("versao deve ser diferente", versao, disciplina.getVersion());
